@@ -190,3 +190,87 @@ bool ACPP_CharacterBase::InventoryFindEmptySlot(int32& OutIndex)
 	OutIndex = -1;
 	return false;
 }
+
+bool ACPP_CharacterBase::EquipItem(int32 InventoryIndex, FS_Inventory InventoryData)
+{
+	int32 EquipmentIndex = GetEquipmentIndex(InventoryData.SlotType, InventoryData.EquipmentInfo.AccessoryType);
+	if ((InventoryIndex < 0 || InventoryIndex >= Inventory.Num()) && EquipmentIndex != -1)
+		return false; // Invalid indices
+
+	// Retrieve the item from the inventory
+	FS_Slots InventoryItem = Inventory[InventoryIndex];
+
+	// Determine EquipmentIndex by Types
+	if (Equipment[EquipmentIndex].SlotType != InventoryItem.SlotType ||
+		(Equipment[EquipmentIndex].SlotType == ESlotType::Accessory &&
+			Equipment[EquipmentIndex].AccessoryType != InventoryItem.AccessoryType))
+		return false; // Type mismatch
+
+	// Swap the items
+	FS_Slots Temp = Equipment[EquipmentIndex];
+	Equipment[EquipmentIndex] = InventoryItem;
+	Inventory[InventoryIndex] = Temp;
+
+	return true;
+}
+
+void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex)
+{
+	if (EquipmentIndex < 0 || EquipmentIndex >= Equipment.Num())
+		return; // Invalid index
+
+	// Move the item from the equipment slot back to the inventory
+	InventoryAddItem(Equipment[EquipmentIndex]);
+
+	// Reset the slot while keeping the type constraints
+	FS_Slots EmptySlot;
+	EmptySlot.Item.RowName = "Empty";
+	EmptySlot.Amount = 0;
+	EmptySlot.SlotType = Equipment[EquipmentIndex].SlotType;
+	EmptySlot.AccessoryType = Equipment[EquipmentIndex].AccessoryType;
+	Equipment[EquipmentIndex] = EmptySlot;
+}
+
+void ACPP_CharacterBase::InitialiseEquipmentSlots()
+{
+	Equipment.SetNum(8); // Ensure there are 7 slots
+
+	// Initialize each slot with the appropriate type
+	Equipment[0].SlotType = ESlotType::Weapon;
+	Equipment[1].SlotType = ESlotType::Armour;
+	Equipment[2].SlotType = ESlotType::Accessory; Equipment[2].AccessoryType = EAccessoryType::Head;
+	Equipment[3].SlotType = ESlotType::Accessory; Equipment[3].AccessoryType = EAccessoryType::Arms;
+	Equipment[4].SlotType = ESlotType::Accessory; Equipment[4].AccessoryType = EAccessoryType::Waist;
+	Equipment[5].SlotType = ESlotType::Accessory; Equipment[5].AccessoryType = EAccessoryType::Shield;
+	Equipment[6].SlotType = ESlotType::Accessory; Equipment[6].AccessoryType = EAccessoryType::WeaponAtt;
+	Equipment[7].SlotType = ESlotType::Mount;
+}
+
+int32 ACPP_CharacterBase::GetEquipmentIndex(ESlotType SlotType, EAccessoryType AccessoryType)
+{
+	switch (SlotType)
+	{
+	case ESlotType::Weapon:
+		return 0;
+	case ESlotType::Armour:
+		return 1;
+	case ESlotType::Accessory:
+		switch (AccessoryType)
+		{
+		case EAccessoryType::Head:
+			return 2;
+		case EAccessoryType::Arms:
+			return 3;
+		case EAccessoryType::Waist:
+			return 4;
+		case EAccessoryType::Shield:
+			return 5;
+		case EAccessoryType::WeaponAtt:
+			return 6;
+		default:
+			return -1; // Accessory type not handled
+		}
+	default:
+		return -1; // Slot type not handled
+	}
+}

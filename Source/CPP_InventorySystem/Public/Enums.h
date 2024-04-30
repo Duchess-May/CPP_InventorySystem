@@ -13,8 +13,22 @@ enum class EThisThatElse : uint8
 };
 
 UENUM(BlueprintType)
+enum class EContextButtonAction : uint8
+{
+	None		UMETA(DisplayName = "None"),
+	Sort		UMETA(DisplayName = "Sort"),
+	Drop		UMETA(DisplayName = "Drop"),
+	Equip		UMETA(DisplayName = "Equip"),
+	Unequip		UMETA(DisplayName = "Unequip"),
+	Split		UMETA(DisplayName = "Split"),
+	OrderUp		UMETA(DisplayName = "Move Up"),
+	OrderDown	UMETA(DisplayName = "Move Down")
+};
+
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
+	None		 UMETA(DisplayName = "N/A"),
 	Bare		 UMETA(DisplayName = "Bare"),
 	TwoHanded    UMETA(DisplayName = "Two-Handed"),
 	OneHanded    UMETA(DisplayName = "One-Handed"),
@@ -47,43 +61,45 @@ enum class EItemCategory : uint8
 	Default         UMETA(DisplayName = "00-Default"),
 	Weapon          UMETA(DisplayName = "01-Weapon"),
 	BodyArmour		UMETA(DisplayName = "02-BodyArmour"),
-	ArmAccessory	UMETA(DisplayName = "03-ArmAccessory"),
-	HeadAccessory	UMETA(DisplayName = "04-HeadAccessory"),
+	HeadAccessory	UMETA(DisplayName = "03-HeadAccessory"),
+	ArmAccessory	UMETA(DisplayName = "04-ArmAccessory"),
 	WaistAccessory	UMETA(DisplayName = "05-WaistAccessory"),
-	HealthItem      UMETA(DisplayName = "06-HealthItem"),
-	EnergyItem      UMETA(DisplayName = "07-EnergyItem"),
-	FoodItem        UMETA(DisplayName = "08-FoodItem"),
-	MedicineItem    UMETA(DisplayName = "09-MedicineItem"),
-	Cloth           UMETA(DisplayName = "10-Cloth"),
-	Seed            UMETA(DisplayName = "11-Seed"),
-	Root            UMETA(DisplayName = "12-Root"),
-	Spice           UMETA(DisplayName = "13-Spice"),
-	Liquid          UMETA(DisplayName = "14-Liquid"),
-	Hide            UMETA(DisplayName = "15-Hide"),
-	Leather         UMETA(DisplayName = "16-Leather"),
-	Bone            UMETA(DisplayName = "17-Bone"),
-	Fur             UMETA(DisplayName = "18-Fur"),
-	Scale           UMETA(DisplayName = "19-Scale"),
-	Shell           UMETA(DisplayName = "20-Shell"),
-	Log             UMETA(DisplayName = "21-Log"),
-	Plank           UMETA(DisplayName = "22-Plank"),
-	MetalOre        UMETA(DisplayName = "23-MetalOre"),
-	MetalPlate      UMETA(DisplayName = "24-MetalPlate"),
-	Gemstone        UMETA(DisplayName = "25-Gemstone"),
-	EnchantedGem    UMETA(DisplayName = "26-EnchantedGem"),
-	Clay            UMETA(DisplayName = "27-Clay"),
-	Ceramic         UMETA(DisplayName = "28-Ceramic"),
-	Porcelain       UMETA(DisplayName = "29-Porcelain"),
-	Flora           UMETA(DisplayName = "30-Flora"),
-	Herbs           UMETA(DisplayName = "31-Herbs"),
-	Fungi           UMETA(DisplayName = "32-Fungi"),
-	Divine          UMETA(DisplayName = "33-Divine"),
-	Magic           UMETA(DisplayName = "34-Magic"),
-	Energy          UMETA(DisplayName = "35-Energy"),
-	Furniture       UMETA(DisplayName = "36-Furniture"),
-	Tool            UMETA(DisplayName = "37-Tool"),
-	Essence         UMETA(DisplayName = "38-Essence"),
-	Extract         UMETA(DisplayName = "39-Extract"),
+	ShieldAccessory	UMETA(DisplayName = "06-ShieldAccessory"),
+	WeaponAccessory	UMETA(DisplayName = "07-WeaponAccessory"),
+	HealthItem      UMETA(DisplayName = "10-HealthItem"),
+	EnergyItem      UMETA(DisplayName = "11-EnergyItem"),
+	FoodItem        UMETA(DisplayName = "12-FoodItem"),
+	MedicineItem    UMETA(DisplayName = "13-MedicineItem"),
+	Cloth           UMETA(DisplayName = "14-Cloth"),
+	Seed            UMETA(DisplayName = "15-Seed"),
+	Root            UMETA(DisplayName = "16-Root"),
+	Spice           UMETA(DisplayName = "17-Spice"),
+	Liquid          UMETA(DisplayName = "18-Liquid"),
+	Hide            UMETA(DisplayName = "19-Hide"),
+	Leather         UMETA(DisplayName = "20-Leather"),
+	Bone            UMETA(DisplayName = "21-Bone"),
+	Fur             UMETA(DisplayName = "22-Fur"),
+	Scale           UMETA(DisplayName = "23-Scale"),
+	Shell           UMETA(DisplayName = "24-Shell"),
+	Log             UMETA(DisplayName = "25-Log"),
+	Plank           UMETA(DisplayName = "26-Plank"),
+	MetalOre        UMETA(DisplayName = "27-MetalOre"),
+	MetalPlate      UMETA(DisplayName = "28-MetalPlate"),
+	Gemstone        UMETA(DisplayName = "29-Gemstone"),
+	EnchantedGem    UMETA(DisplayName = "30-EnchantedGem"),
+	Clay            UMETA(DisplayName = "31-Clay"),
+	Ceramic         UMETA(DisplayName = "32-Ceramic"),
+	Porcelain       UMETA(DisplayName = "33-Porcelain"),
+	Flora           UMETA(DisplayName = "34-Flora"),
+	Herbs           UMETA(DisplayName = "35-Herbs"),
+	Fungi           UMETA(DisplayName = "36-Fungi"),
+	Divine          UMETA(DisplayName = "37-Divine"),
+	Magic           UMETA(DisplayName = "38-Magic"),
+	Energy          UMETA(DisplayName = "39-Energy"),
+	Furniture       UMETA(DisplayName = "40-Furniture"),
+	Tool            UMETA(DisplayName = "41-Tool"),
+	Essence         UMETA(DisplayName = "42-Essence"),
+	Extract         UMETA(DisplayName = "43-Extract"),
 	Currency        UMETA(DisplayName = "90-Currency"),
 	Mount			UMETA(DisplayName = "91-Mount"),
 	Misc            UMETA(DisplayName = "99-Misc")
@@ -97,6 +113,17 @@ enum class EItemType : uint8
 	Weapon		UMETA(DisplayName = "Weapon"),
 	Armour		UMETA(DisplayName = "Armour"),
 	Accessory	UMETA(DisplayName = "Accessory")
+};
+
+UENUM(BlueprintType)
+enum class EAccessoryType : uint8
+{
+	None		UMETA(DisplayName = "---"),
+	Head		UMETA(DisplayName = "Head"),
+	Arms		UMETA(DisplayName = "Arms"),
+	Waist		UMETA(DisplayName = "Waist"),
+	Shield		UMETA(DisplayName = "Shield"),
+	WeaponAtt	UMETA(DisplayName = "WeaponAttachment")
 };
 
 UENUM(BlueprintType)
@@ -155,7 +182,9 @@ enum class ESlotType : uint8
 UENUM(BlueprintType)
 enum class EWidgetType : uint8
 {
+	Equipment		UMETA(DisplayName = "Equipment"),
 	Inventory		UMETA(DisplayName = "Inventory"),
+	Consumable		UMETA(DisplayName = "Consumable"),
 	Quest			UMETA(DisplayName = "Quest"),
 	Shop			UMETA(DisplayName = "Shop"),
 	Crafting		UMETA(DisplayName = "Crafting"),

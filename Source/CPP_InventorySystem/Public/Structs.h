@@ -69,8 +69,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Amount", MakeStructureDefaultValue = "0"))
 	int32 Amount;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SortingType", MakeStructureDefaultValue = "Empty"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SortingType_Slot", MakeStructureDefaultValue = "Empty"))
 	ESlotType SlotType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SortingType_Weapon"))
+	EWeaponType WeaponType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SortingType_Accessory"))
+	EAccessoryType AccessoryType;
 };
 
 
@@ -203,8 +209,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (DisplayName = "Actor", MakeStructureDefaultValue = "None"))
 	TObjectPtr<AActor> Actor;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Type"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SlotType"))
 	ESlotType SlotType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "WeaponType"))
+	EWeaponType WeaponType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "AccessoryType"))
+	EAccessoryType AccessoryType;
 };
 
 
@@ -221,8 +233,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Desc"))
 	FString Desc;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Type", MakeStructureDefaultValue = "Empty"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SlotType", MakeStructureDefaultValue = "Empty"))
 	ESlotType SlotType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "EquipmentInfo"))
+	FS_Equipment EquipmentInfo;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Category", MakeStructureDefaultValue = "Default"))
 	EItemCategory Category;

@@ -59,6 +59,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool InventoryFindEmptySlot(int32& OutIndex);
 
+	// Equipment
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory|Equipment")
+	bool EquipItem(int32 InventoryIndex, FS_Inventory InventoryData);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory|Equipment")
+	void RemoveItemFromEquipment(int32 EquipmentIndex);
+
 
 	// Variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
@@ -68,7 +76,19 @@ protected:
 
 	/* Change to VisibleAnywhere, BlueprintReadOnly when done testing */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+	TArray<FS_Slots> Equipment;
+
+	/* Change to VisibleAnywhere, BlueprintReadOnly when done testing */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	TArray<FS_Slots> Inventory;
+
+	/* Change to VisibleAnywhere, BlueprintReadOnly when done testing */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+	TArray<FS_Slots> KeyItems;
+
+	/* Change to VisibleAnywhere, BlueprintReadOnly when done testing */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+	TArray<FS_Slots> Mounts;
 
 private:
 	/** Top down camera */
@@ -78,4 +98,8 @@ private:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
+
+	void InitialiseEquipmentSlots();
+
+	int32 GetEquipmentIndex(ESlotType SlotType, EAccessoryType AccessoryType);
 };
