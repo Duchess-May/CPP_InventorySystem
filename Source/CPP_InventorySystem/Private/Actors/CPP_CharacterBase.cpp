@@ -35,6 +35,9 @@ ACPP_CharacterBase::ACPP_CharacterBase()
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	// Inventory
+	InventorySpaces = 100;
 }
 
 void ACPP_CharacterBase::Tick(float DeltaSeconds)
@@ -57,11 +60,12 @@ bool ACPP_CharacterBase::InventoryAddItem(const FS_Slots& ItemInfo)
 	}
 	else
 	{
-		bool bFoundEmptySlot = InventoryFindEmptySlot(ItemIndex);
-		if (bFoundEmptySlot)
-		{
-			bSuccess = InventoryAddItemToSlot(ItemInfo, ItemIndex);
-		}
+		//bool bFoundEmptySlot = InventoryFindEmptySlot(ItemIndex);
+		//if (bFoundEmptySlot)
+		//{
+		//	bSuccess = InventoryAddItemToSlot(ItemInfo, ItemIndex);
+		//}
+		bSuccess = InventoryCreateSlot(ItemInfo);
 	}
 
 	return bSuccess;
@@ -110,6 +114,65 @@ bool ACPP_CharacterBase::InventoryAddItemToSlot(const FS_Slots ItemInfo, const i
 	}
 
 	return bSuccess;
+}
+
+bool ACPP_CharacterBase::InventoryRemoveAmountAtIndex(const int32 Index, const int32 Amount)
+{
+	// First, check if the index is valid to prevent out-of-bounds errors
+	if (Index >= 0 && Index < Inventory.Num())
+	{
+		// Ensure there is something to remove and the amount isn't negative
+		if (Inventory[Index].Amount > 0 && Amount > 0)
+		{
+			Inventory[Index].Amount -= Amount;
+			// Remove if empty
+			if (Inventory[Index].Amount <= 0)
+			{
+				Inventory.RemoveAt(Index);
+			}
+			return true;
+		}
+	}
+	return false; // Nothing to remove or bad index
+}
+
+bool ACPP_CharacterBase::InventoryRemoveItemAtIndex(const int32 Index)
+{
+	// Check if the index is valid
+	if (Index >= 0 && Index < Inventory.Num())
+	{
+		// Optionally, you might want to check if the item at the index is valid or not
+		// This depends on what 'valid' means in your context
+		// For example, check if the Amount is more than 0 or any other validity condition
+		if (Inventory[Index].Amount > 0) // Assuming 'valid' means Amount > 0
+		{
+			Inventory.RemoveAt(Index);
+			return true;
+		}
+	}
+	return false; // Invalid index or not a valid item
+}
+
+bool ACPP_CharacterBase::InventoryCreateSlot(const FS_Slots ItemData)
+{
+	// Check if there's space in the inventory
+	if (Inventory.Num() < InventorySpaces)
+	{
+		int32 OutIndex = -1;
+		// Try to find an empty slot
+		if (InventoryFindEmptySlot(OutIndex) && OutIndex != -1)
+		{
+			Inventory[OutIndex] = ItemData; // Set the item in the found empty slot
+			return true;
+		}
+		else
+		{
+			// If no empty slot is found, add the item at the end of the list
+			Inventory.Add(ItemData);
+			return true;
+		}
+	}
+	return false; // No space in the inventory
 }
 
 bool ACPP_CharacterBase::InventoryFindEmptySlot(int32& OutIndex)

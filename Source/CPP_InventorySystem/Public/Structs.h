@@ -6,6 +6,9 @@
 #include "Enums.h"
 #include "Structs.generated.h"
 
+// Forward declarations
+class ACPP_ItemBase;
+
 /** Item Category */
 USTRUCT(BlueprintType)
 struct FS_Category
@@ -66,7 +69,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Amount", MakeStructureDefaultValue = "0"))
 	int32 Amount;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Type", MakeStructureDefaultValue = "Empty"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SortingType", MakeStructureDefaultValue = "Empty"))
 	ESlotType SlotType;
 };
 
@@ -245,8 +248,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "OutCraftAmount", MakeStructureDefaultValue = "0"))
 	int32 OutCraftAmount;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "ActorClass", MakeStructureDefaultValue = "None"))
-	TObjectPtr<UClass> ActorClass;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "ActorClass", AllowedClasses = "CPP_ItemBase"))
+	TSubclassOf<ACPP_ItemBase> ActorClass;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "ExtraSlots", MakeStructureDefaultValue = "0"))
 	int32 ExtraSlots;

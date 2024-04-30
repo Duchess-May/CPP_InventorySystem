@@ -46,8 +46,29 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool InventoryAddItemToSlot(const FS_Slots ItemData, const int32 Index);
 
+	/* Remove a specified amount of stacked items (or single) at inventory array index */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool InventoryRemoveAmountAtIndex(const int32 Index, const int32 Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	bool InventoryRemoveItemAtIndex(const int32 Index);
+
+	UFUNCTION(BlueprintCallable, Category = "inventory")
+	bool InventoryCreateSlot(const FS_Slots ItemData);
+
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool InventoryFindEmptySlot(int32& OutIndex);
+
+
+	// Variables
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	int32 InventorySpaces;
+
+protected:
+
+	/* Change to VisibleAnywhere, BlueprintReadOnly when done testing */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
+	TArray<FS_Slots> Inventory;
 
 private:
 	/** Top down camera */
@@ -57,8 +78,4 @@ private:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
-
-	/* Change to VisibleAnywhere, BlueprintReadOnly when done testing */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
-	TArray<FS_Slots> Inventory;
 };

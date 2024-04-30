@@ -27,6 +27,7 @@ ACPP_ItemBase::ACPP_ItemBase()
 	Stats.Level = 0;
 
 	LevelRequirement = 0;
+	SellValue = 0;
 
 }
 
