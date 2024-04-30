@@ -15,10 +15,10 @@ enum class EThisThatElse : uint8
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
-	TwoHanded    UMETA(DisplayName = "TwoHanded"),
-	OneHanded    UMETA(DisplayName = "OneHanded"),
-	Ranged       UMETA(DisplayName = "Ranged"),
-	Unequipped   UMETA(DisplayName = "Unequipped")
+	Bare		 UMETA(DisplayName = "Bare"),
+	TwoHanded    UMETA(DisplayName = "Two-Handed"),
+	OneHanded    UMETA(DisplayName = "One-Handed"),
+	Ranged       UMETA(DisplayName = "Ranged")
 };
 
 
@@ -84,14 +84,15 @@ enum class EItemCategory : uint8
 	Tool            UMETA(DisplayName = "37-Tool"),
 	Essence         UMETA(DisplayName = "38-Essence"),
 	Extract         UMETA(DisplayName = "39-Extract"),
-	Mount			UMETA(DisplayName = "40-Mount"),
 	Currency        UMETA(DisplayName = "90-Currency"),
+	Mount			UMETA(DisplayName = "91-Mount"),
 	Misc            UMETA(DisplayName = "99-Misc")
 };
 
 UENUM(BlueprintType)
 enum class EItemType : uint8
 {
+	Empty		UMETA(DisplayName = "Empty"),
 	Consumable	UMETA(DisplayName = "Consumable"),
 	Weapon		UMETA(DisplayName = "Weapon"),
 	Armour		UMETA(DisplayName = "Armour"),

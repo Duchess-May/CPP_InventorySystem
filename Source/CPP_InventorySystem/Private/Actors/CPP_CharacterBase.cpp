@@ -92,7 +92,6 @@ bool ACPP_CharacterBase::InventoryAddItemToSlot(const FS_Slots ItemInfo, const i
 	{
 		Inventory[Index].Item = ItemInfo.Item;
 		Inventory[Index].Amount = ItemInfo.Amount;
-		Inventory[Index].Type = ItemInfo.Type;
 
 		bSuccess = true;
 	}

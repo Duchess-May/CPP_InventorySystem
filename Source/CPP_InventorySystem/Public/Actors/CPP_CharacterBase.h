@@ -17,7 +17,7 @@
 #include "CPP_CharacterBase.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class CPP_INVENTORYSYSTEM_API ACPP_CharacterBase : public ACharacter
