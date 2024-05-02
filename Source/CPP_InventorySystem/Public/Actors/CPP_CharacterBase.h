@@ -38,7 +38,7 @@ public:
 
 	// Inventory Functions
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool InventoryAddItem(const FS_Slots& ItemInfo);
+	bool InventoryAddItem(const FS_Slots& ItemInfo, bool bIgnoreStack);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool InventoryFindStack(const FName RowName, const int32 Amount, int32& OutIndex, int32& OutAmount);
@@ -48,10 +48,10 @@ public:
 
 	/* Remove a specified amount of stacked items (or single) at inventory array index */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool InventoryRemoveAmountAtIndex(const int32 Index, const int32 Amount);
+	bool InventoryRemoveAmountAtIndex(const FName RowName, const int32 Index, const int32 Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool InventoryRemoveItemAtIndex(const int32 Index);
+	bool InventoryRemoveItemAtIndex(const FName RowName, const int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category = "inventory")
 	bool InventoryCreateSlot(const FS_Slots ItemData);
@@ -71,6 +71,8 @@ public:
 	// Variables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	int32 InventorySpaces;
+
+	int32 EquipmentSlots;
 
 protected:
 
@@ -99,7 +101,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	void InitialiseEquipmentSlots();
+	void InitialiseEquipmentSlot(int32 SlotNumber);
 
 	int32 GetEquipmentIndex(ESlotType SlotType, EAccessoryType AccessoryType);
 };

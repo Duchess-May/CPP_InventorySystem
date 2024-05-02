@@ -63,7 +63,7 @@ struct FS_Slots
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Item", MakeStructureDefaultValue = ""))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Item", MakeStructureDefaultValue = "(DataTable=\"/Script/Engine.DataTable'/Game/Data/DT_Iventory.DT_Inventory'\",RowName=\"Empty\")"))
 	FDataTableRowHandle Item;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Amount", MakeStructureDefaultValue = "0"))

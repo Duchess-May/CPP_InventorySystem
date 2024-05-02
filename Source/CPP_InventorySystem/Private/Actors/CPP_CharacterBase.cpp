@@ -39,7 +39,14 @@ ACPP_CharacterBase::ACPP_CharacterBase()
 
 	// Inventory
 	InventorySpaces = 100;
-	InitialiseEquipmentSlots();
+	EquipmentSlots = 8;
+
+	// Create default equipment slots
+	Equipment.SetNum(EquipmentSlots);
+	for (int32 i = 0; i < EquipmentSlots; i++)
+	{
+		InitialiseEquipmentSlot(i);
+	}
 }
 
 void ACPP_CharacterBase::Tick(float DeltaSeconds)
@@ -47,30 +54,23 @@ void ACPP_CharacterBase::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-bool ACPP_CharacterBase::InventoryAddItem(const FS_Slots& ItemInfo)
+bool ACPP_CharacterBase::InventoryAddItem(const FS_Slots& ItemInfo, bool bIgnoreStack)
 {
-	bool bSuccess = false;
 
-	// Check for stacking or add a new slot for the item
-	int32 ItemIndex = 0;
-	int32 ExistingAmount = 0;
-	bool bFoundStack = InventoryFindStack(ItemInfo.Item.RowName, ItemInfo.Amount, ItemIndex, ExistingAmount);
-
-	if (bFoundStack)
+	if (!bIgnoreStack)
 	{
-		bSuccess = InventoryAddItemToSlot(ItemInfo, ItemIndex);
-	}
-	else
-	{
-		//bool bFoundEmptySlot = InventoryFindEmptySlot(ItemIndex);
-		//if (bFoundEmptySlot)
-		//{
-		//	bSuccess = InventoryAddItemToSlot(ItemInfo, ItemIndex);
-		//}
-		bSuccess = InventoryCreateSlot(ItemInfo);
-	}
+		// Check for stacking or add a new slot for the item
+		int32 ItemIndex = 0;
+		int32 ExistingAmount = 0;
 
-	return bSuccess;
+		bool bFoundStack = InventoryFindStack(ItemInfo.Item.RowName, ItemInfo.Amount, ItemIndex, ExistingAmount);
+
+		if (bFoundStack)
+		{
+			return InventoryAddItemToSlot(ItemInfo, ItemIndex);
+		}
+	}
+	return InventoryCreateSlot(ItemInfo);
 }
 
 bool ACPP_CharacterBase::InventoryFindStack(const FName RowName, const int32 Amount, int32& OutIndex, int32& OutAmount)
@@ -118,38 +118,44 @@ bool ACPP_CharacterBase::InventoryAddItemToSlot(const FS_Slots ItemInfo, const i
 	return bSuccess;
 }
 
-bool ACPP_CharacterBase::InventoryRemoveAmountAtIndex(const int32 Index, const int32 Amount)
+bool ACPP_CharacterBase::InventoryRemoveAmountAtIndex(const FName RowName, const int32 Index, const int32 Amount)
 {
-	// First, check if the index is valid to prevent out-of-bounds errors
-	if (Index >= 0 && Index < Inventory.Num())
+	if (RowName != "None" && RowName != "Empty")
 	{
-		// Ensure there is something to remove and the amount isn't negative
-		if (Inventory[Index].Amount > 0 && Amount > 0)
+		// First, check if the index is valid to prevent out-of-bounds errors
+		if (Index >= 0 && Index < Inventory.Num())
 		{
-			Inventory[Index].Amount -= Amount;
-			// Remove if empty
-			if (Inventory[Index].Amount <= 0)
+			// Ensure there is something to remove and the amount isn't negative
+			if (Inventory[Index].Amount > 0 && Amount > 0)
 			{
-				Inventory.RemoveAt(Index);
+				Inventory[Index].Amount -= Amount;
+				// Remove if empty
+				if (Inventory[Index].Amount <= 0)
+				{
+					Inventory.RemoveAt(Index);
+				}
+				return true;
 			}
-			return true;
 		}
 	}
 	return false; // Nothing to remove or bad index
 }
 
-bool ACPP_CharacterBase::InventoryRemoveItemAtIndex(const int32 Index)
+bool ACPP_CharacterBase::InventoryRemoveItemAtIndex(const FName RowName, const int32 Index)
 {
-	// Check if the index is valid
-	if (Index >= 0 && Index < Inventory.Num())
+	if (RowName != "None" && RowName != "Empty")
 	{
-		// Optionally, you might want to check if the item at the index is valid or not
-		// This depends on what 'valid' means in your context
-		// For example, check if the Amount is more than 0 or any other validity condition
-		if (Inventory[Index].Amount > 0) // Assuming 'valid' means Amount > 0
+		// Check if the index is valid
+		if (Index >= 0 && Index < Inventory.Num())
 		{
-			Inventory.RemoveAt(Index);
-			return true;
+			// Optionally, you might want to check if the item at the index is valid or not
+			// This depends on what 'valid' means in your context
+			// For example, check if the Amount is more than 0 or any other validity condition
+			if (Inventory[Index].Amount > 0) // Assuming 'valid' means Amount > 0
+			{
+				Inventory.RemoveAt(Index);
+				return true;
+			}
 		}
 	}
 	return false; // Invalid index or not a valid item
@@ -197,7 +203,7 @@ bool ACPP_CharacterBase::EquipItem(int32 InventoryIndex, FS_Inventory InventoryD
 {
 	int32 invindex = InventoryIndex;
 
-	UDataTable* EquipmentDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Blueprints/Inventory/DT_Inventory.DT_Inventory'")));
+	UDataTable* EquipmentDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Data/DT_Inventory.DT_Inventory'")));
 
 	if (EquipmentDataTable)
 	{
@@ -227,9 +233,15 @@ bool ACPP_CharacterBase::EquipItem(int32 InventoryIndex, FS_Inventory InventoryD
 		Equipment[EquipmentIndex].Amount = 1;
 		Equipment[EquipmentIndex].Item.DataTable = EquipmentDataTable;
 
-		if (Temp.SlotType != ESlotType::Empty)
+
+		// Swap equipment, else remove from inventory when adding to equipment
+		if (Temp.SlotType != ESlotType::Empty && Temp.Item.RowName != "None" && Temp.Item.RowName != "Empty")
 		{
 			Inventory[invindex] = Temp;
+		}
+		else
+		{
+			InventoryRemoveItemAtIndex(Equipment[EquipmentIndex].Item.RowName, invindex);
 		}
 
 		return true;
@@ -243,44 +255,38 @@ void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex)
 		return; // Invalid index
 
 	// Move the item from the equipment slot back to the inventory
-	InventoryAddItem(Equipment[EquipmentIndex]);
+	InventoryAddItem(Equipment[EquipmentIndex], false);
 
-	// Reset the slot while keeping the type constraints
-	FS_Slots EmptySlot;
-	EmptySlot.Item.RowName = "Empty";
-	EmptySlot.Amount = 0;
-	EmptySlot.SlotType = Equipment[EquipmentIndex].SlotType;
-	EmptySlot.AccessoryType = Equipment[EquipmentIndex].AccessoryType;
-	Equipment[EquipmentIndex] = EmptySlot;
+	// Reset the slot from equipment
+	InitialiseEquipmentSlot(EquipmentIndex);
 }
 
-void ACPP_CharacterBase::InitialiseEquipmentSlots()
+void ACPP_CharacterBase::InitialiseEquipmentSlot(int32 SlotNumber)
 {
-	Equipment.SetNum(8); // Configure Equipment Size
-	static ConstructorHelpers::FObjectFinder<UDataTable> DataTableFinder(TEXT("DataTable'/Game/Blueprints/Inventory/DT_Inventory.DT_Inventory'"));
-	UDataTable* EquipmentDataTable = DataTableFinder.Object;
+	UDataTable* EquipmentDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, TEXT("DataTable'/Game/Data/DT_Inventory.DT_Inventory'")));
 
-	if (DataTableFinder.Succeeded())
+	if (EquipmentDataTable)
 	{
-		for (int32 i = 0; i < Equipment.Num(); i++)
+		if (SlotNumber >= 0 && SlotNumber < Equipment.Num())
 		{
-			Equipment[i].Amount = 0;
-			Equipment[i].Item.DataTable = EquipmentDataTable;
-		}
+			Equipment[SlotNumber].Item.RowName = "Empty";
+			Equipment[SlotNumber].Amount = 0;
+			Equipment[SlotNumber].Item.DataTable = EquipmentDataTable;
 
-		// Initialize each slot with the appropriate type
-		Equipment[0].SlotType = ESlotType::Weapon; Equipment[0].WeaponType = EWeaponType::Bare;
-		Equipment[1].SlotType = ESlotType::Armour; 
-		Equipment[2].SlotType = ESlotType::Accessory; Equipment[2].AccessoryType = EAccessoryType::Head;
-		Equipment[3].SlotType = ESlotType::Accessory; Equipment[3].AccessoryType = EAccessoryType::Arms;
-		Equipment[4].SlotType = ESlotType::Accessory; Equipment[4].AccessoryType = EAccessoryType::Waist;
-		Equipment[5].SlotType = ESlotType::Accessory; Equipment[5].AccessoryType = EAccessoryType::Shield;
-		Equipment[6].SlotType = ESlotType::Accessory; Equipment[6].AccessoryType = EAccessoryType::WeaponAtt;
-		Equipment[7].SlotType = ESlotType::Mount; 
+			// Initialize each slot with the appropriate type
+			if (SlotNumber == 0) Equipment[0].SlotType = ESlotType::Weapon; Equipment[0].WeaponType = EWeaponType::Bare;
+			if (SlotNumber == 1) Equipment[1].SlotType = ESlotType::Armour;
+			if (SlotNumber == 2) Equipment[2].SlotType = ESlotType::Accessory; Equipment[2].AccessoryType = EAccessoryType::Head;
+			if (SlotNumber == 3) Equipment[3].SlotType = ESlotType::Accessory; Equipment[3].AccessoryType = EAccessoryType::Arms;
+			if (SlotNumber == 4) Equipment[4].SlotType = ESlotType::Accessory; Equipment[4].AccessoryType = EAccessoryType::Waist;
+			if (SlotNumber == 5) Equipment[5].SlotType = ESlotType::Accessory; Equipment[5].AccessoryType = EAccessoryType::Shield;
+			if (SlotNumber == 6) Equipment[6].SlotType = ESlotType::Accessory; Equipment[6].AccessoryType = EAccessoryType::WeaponAtt;
+			if (SlotNumber == 7) Equipment[7].SlotType = ESlotType::Mount;
+		}
 	}
 	else
 	{
-		FString message = TEXT("CPP_CharacterBase.cpp --> InitialiseEquipmentSlots.EquipmentDataTable is not valid!");
+		FString message = TEXT("CPP_CharacterBase.cpp --> InitialiseEquipmentSlot.EquipmentDataTable is not valid!");
 		UE_LOG(LogTemp, Error, TEXT("%s"), *message);
 	}
 }
