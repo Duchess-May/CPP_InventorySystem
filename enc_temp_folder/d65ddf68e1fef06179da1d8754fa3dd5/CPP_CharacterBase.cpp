@@ -223,7 +223,9 @@ bool ACPP_CharacterBase::EquipItem(int32 InventoryIndex, FS_Inventory InventoryD
 		FS_Slots Temp = Equipment[EquipmentIndex];
 
 		Equipment[EquipmentIndex] = InventoryItem;
+		//Equipment[EquipmentIndex].SlotType = InventoryItem.SlotType;
 		Equipment[EquipmentIndex].WeaponType = InventoryItem.WeaponType;
+		//Equipment[EquipmentIndex].AccessoryType = InventoryItem.AccessoryType;
 		Equipment[EquipmentIndex].Amount = 1;
 		Equipment[EquipmentIndex].Item.DataTable = EquipmentDataTable;
 

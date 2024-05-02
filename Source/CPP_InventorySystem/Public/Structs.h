@@ -211,12 +211,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SlotType"))
 	ESlotType SlotType;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "WeaponType"))
-	EWeaponType WeaponType;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "AccessoryType"))
-	EAccessoryType AccessoryType;
 };
 
 
@@ -236,8 +230,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SlotType", MakeStructureDefaultValue = "Empty"))
 	ESlotType SlotType;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "EquipmentInfo"))
-	FS_Equipment EquipmentInfo;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "WeaponType"))
+	EWeaponType WeaponType;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "AccessoryType"))
+	EAccessoryType AccessoryType;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Category", MakeStructureDefaultValue = "Default"))
 	EItemCategory Category;
