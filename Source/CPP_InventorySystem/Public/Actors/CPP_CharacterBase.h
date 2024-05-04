@@ -65,7 +65,7 @@ public:
 	bool EquipItem(int32 InventoryIndex, FS_Inventory InventoryData);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory|Equipment")
-	void RemoveItemFromEquipment(int32 EquipmentIndex);
+	void RemoveItemFromEquipment(int32 EquipmentIndex, bool bReturnToInventory);
 
 
 	// Variables

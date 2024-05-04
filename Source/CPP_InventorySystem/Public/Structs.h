@@ -69,13 +69,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Amount", MakeStructureDefaultValue = "0"))
 	int32 Amount;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SortingType_Slot", MakeStructureDefaultValue = "Empty"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting_Slot", MakeStructureDefaultValue = "Empty"))
 	ESlotType SlotType;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SortingType_Weapon"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting_Weapon"))
 	EWeaponType WeaponType;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SortingType_Accessory"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting_Accessory"))
 	EAccessoryType AccessoryType;
 };
 

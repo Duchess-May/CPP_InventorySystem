@@ -249,13 +249,16 @@ bool ACPP_CharacterBase::EquipItem(int32 InventoryIndex, FS_Inventory InventoryD
 	return false;
 }
 
-void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex)
+void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex, bool bReturnToInventory)
 {
 	if (EquipmentIndex < 0 || EquipmentIndex >= Equipment.Num())
 		return; // Invalid index
 
-	// Move the item from the equipment slot back to the inventory
-	InventoryAddItem(Equipment[EquipmentIndex], false);
+	if (bReturnToInventory)
+	{
+		// Move the item from the equipment slot back to the inventory
+		InventoryAddItem(Equipment[EquipmentIndex], false);
+	}
 
 	// Reset the slot from equipment
 	InitialiseEquipmentSlot(EquipmentIndex);

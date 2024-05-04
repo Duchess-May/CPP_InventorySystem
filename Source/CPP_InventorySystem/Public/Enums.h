@@ -22,7 +22,8 @@ enum class EContextButtonAction : uint8
 	Unequip		UMETA(DisplayName = "Unequip"),
 	Split		UMETA(DisplayName = "Split"),
 	OrderUp		UMETA(DisplayName = "Move Up"),
-	OrderDown	UMETA(DisplayName = "Move Down")
+	OrderDown	UMETA(DisplayName = "Move Down"),
+	DropConfirm UMETA(DisplayName = "Confirm Drop")
 };
 
 UENUM(BlueprintType)
@@ -177,6 +178,16 @@ enum class ESlotType : uint8
 	KeyItem			UMETA(DisplayName = "Key Item"),
 	Material        UMETA(DisplayName = "Material"),
 	Mount			UMETA(DisplayName = "Mount")
+};
+
+
+UENUM(BlueprintType)
+enum class EItemPanelType : uint8
+{
+	InventoryPanel	UMETA(DisplayName = "Inventory Panel"),
+	EquipmentPanel	UMETA(DisplayName = "Equipment Panel"),
+	KeyItemPanel	UMETA(DisplayName = "Key Item Panel"),
+	MountPanel		UMETA(DisplayName = "Mount Panel")
 };
 
 UENUM(BlueprintType)
