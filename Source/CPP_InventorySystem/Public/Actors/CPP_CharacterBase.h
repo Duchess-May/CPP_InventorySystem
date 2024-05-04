@@ -65,7 +65,20 @@ public:
 	bool EquipItem(int32 InventoryIndex, FS_Inventory InventoryData);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory|Equipment")
-	void RemoveItemFromEquipment(int32 EquipmentIndex, bool bReturnToInventory);
+	void RemoveItemFromEquipment(int32 EquipmentIndex, EItemPanelType ReturnPanel);
+
+	// Key Items
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory|Key Items")
+	bool AddToKeyItems(const FS_Slots& ItemInfo);
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory|Key Items")
+	void RemoveItemFromKeyItems(int32 KeyItemIndex);
+
+	// Mounts
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory|Key Items")
+	bool UnequipMount(const FS_Slots& ItemInfo);
 
 
 	// Variables

@@ -249,19 +249,40 @@ bool ACPP_CharacterBase::EquipItem(int32 InventoryIndex, FS_Inventory InventoryD
 	return false;
 }
 
-void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex, bool bReturnToInventory)
+void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex, EItemPanelType ReturnPanel)
 {
 	if (EquipmentIndex < 0 || EquipmentIndex >= Equipment.Num())
 		return; // Invalid index
 
-	if (bReturnToInventory)
+	switch (ReturnPanel)
 	{
-		// Move the item from the equipment slot back to the inventory
-		InventoryAddItem(Equipment[EquipmentIndex], false);
+		case EItemPanelType::MountPanel:
+		{
+			UnequipMount(Equipment[EquipmentIndex]);
+		}
+		case EItemPanelType::InventoryPanel:
+		{
+			// Move the item from the equipment slot back to the inventory
+			InventoryAddItem(Equipment[EquipmentIndex], false);
+		}
 	}
 
 	// Reset the slot from equipment
 	InitialiseEquipmentSlot(EquipmentIndex);
+}
+
+bool ACPP_CharacterBase::AddToKeyItems(const FS_Slots& ItemInfo)
+{
+	return false;
+}
+
+void ACPP_CharacterBase::RemoveItemFromKeyItems(int32 KeyItemIndex)
+{
+}
+
+bool ACPP_CharacterBase::UnequipMount(const FS_Slots& ItemInfo)
+{
+	return false;
 }
 
 void ACPP_CharacterBase::InitialiseEquipmentSlot(int32 SlotNumber)

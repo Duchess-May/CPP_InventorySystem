@@ -184,6 +184,7 @@ enum class ESlotType : uint8
 UENUM(BlueprintType)
 enum class EItemPanelType : uint8
 {
+	None			UMETA(DisplayName = "None"),
 	InventoryPanel	UMETA(DisplayName = "Inventory Panel"),
 	EquipmentPanel	UMETA(DisplayName = "Equipment Panel"),
 	KeyItemPanel	UMETA(DisplayName = "Key Item Panel"),
