@@ -22,9 +22,11 @@ ACPP_ItemBase::ACPP_ItemBase()
 	Stats.STR = 0;
 	Stats.VIT = 0;
 	Stats.DEX = 0;
-	Stats.HST = 0;
+	Stats.THT = 0;
+	Stats.PER = 0;
+	Stats.SPD = 0;
 	Stats.EXP = 0;
-	Stats.Level = 0;
+	Stats.LVL = 0;
 
 	LevelRequirement = 0;
 	SellValue = 0;
@@ -60,10 +62,12 @@ void ACPP_ItemBase::SetVariablesFromData(UDataTable* DataTable)
 			Stats.STR = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.STR;
 			Stats.VIT = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.VIT;
 			Stats.DEX = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.DEX;
-			Stats.HST = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.HST;
+			Stats.THT = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.THT;
+			Stats.PER = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.PER;
+			Stats.SPD = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.SPD;
 			Stats.EXP = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.EXP;
 
-			LevelRequirement = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.Level;
+			LevelRequirement = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->Stats.LVL;
 			SellValue = DataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->SellValue;
 		}
 	}

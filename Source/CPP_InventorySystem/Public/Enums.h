@@ -67,6 +67,7 @@ enum class EItemCategory : uint8
 	WaistAccessory	UMETA(DisplayName = "05-WaistAccessory"),
 	ShieldAccessory	UMETA(DisplayName = "06-ShieldAccessory"),
 	WeaponAccessory	UMETA(DisplayName = "07-WeaponAccessory"),
+	RingAccessory	UMETA(DisplayName = "07-RingAccessory"),
 	HealthItem      UMETA(DisplayName = "10-HealthItem"),
 	EnergyItem      UMETA(DisplayName = "11-EnergyItem"),
 	FoodItem        UMETA(DisplayName = "12-FoodItem"),
@@ -103,6 +104,7 @@ enum class EItemCategory : uint8
 	Extract         UMETA(DisplayName = "43-Extract"),
 	Currency        UMETA(DisplayName = "90-Currency"),
 	Mount			UMETA(DisplayName = "91-Mount"),
+	Blueprints      UMETA(DisplayName = "95-Blueprints"),
 	Misc            UMETA(DisplayName = "99-Misc")
 };
 
@@ -122,6 +124,7 @@ enum class EAccessoryType : uint8
 	None		UMETA(DisplayName = "---"),
 	Head		UMETA(DisplayName = "Head"),
 	Arms		UMETA(DisplayName = "Arms"),
+	Ring        UMETA(DisplayName = "Ring"),
 	Waist		UMETA(DisplayName = "Waist"),
 	Shield		UMETA(DisplayName = "Shield"),
 	WeaponAtt	UMETA(DisplayName = "WeaponAttachment")

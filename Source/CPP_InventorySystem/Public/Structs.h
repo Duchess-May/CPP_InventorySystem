@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Enums.h"
+#include "Constants.h"
 #include "Structs.generated.h"
 
 // Forward declarations
@@ -63,19 +64,19 @@ struct FS_Slots
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Item", MakeStructureDefaultValue = "(DataTable=\"/Script/Engine.DataTable'/Game/Data/DT_Iventory.DT_Inventory'\",RowName=\"Empty\")"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Item", MakeStructureDefaultValue = InventoryDataTableForStruct))
 	FDataTableRowHandle Item;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Amount", MakeStructureDefaultValue = "0"))
 	int32 Amount;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting_Slot", MakeStructureDefaultValue = "Empty"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting (Slot)", MakeStructureDefaultValue = "Empty"))
 	ESlotType SlotType;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting_Weapon"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting (Weapon)"))
 	EWeaponType WeaponType;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting_Accessory"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Sorting (Accessory)"))
 	EAccessoryType AccessoryType;
 };
 
@@ -118,14 +119,20 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "DEX", MakeStructureDefaultValue = "0.000000"))
 	double DEX;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "HST", MakeStructureDefaultValue = "0.000000"))
-	double HST;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "THT", MakeStructureDefaultValue = "0.000000"))
+	double THT;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "PER", MakeStructureDefaultValue = "0.000000"))
+	double PER;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "SPD", MakeStructureDefaultValue = "0.000000"))
+	double SPD;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "EXP", MakeStructureDefaultValue = "0"))
 	int32 EXP;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "LVL", MakeStructureDefaultValue = "1"))
-	int32 Level;
+	int32 LVL;
 };
 
 

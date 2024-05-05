@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Structs.h"
+#include "Constants.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
 #include "Components/DecalComponent.h"
@@ -35,8 +36,8 @@ public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-
 	// Inventory Functions
+
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool InventoryAddItem(const FS_Slots& ItemInfo, bool bIgnoreStack);
 
@@ -80,11 +81,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory|Key Items")
 	bool UnequipMount(const FS_Slots& ItemInfo);
 
-
 	// Variables
+
+	/* Character Stats: HP, EP, STR, DEF, DEX, VIT, THT, PER, SPD, EXP, LVL */
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Default", meta = (ExposeOnSpawn = "true"))
+	FS_Stats Stats;
+
+	/* Inventory - Expandable inventory for all items */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
 	int32 InventorySpaces;
 
+	/* Equipment Slots - Fixed amount for equippable items */
 	int32 EquipmentSlots;
 
 protected:
@@ -105,6 +112,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	TArray<FS_Slots> Mounts;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Constants|Data", meta = (AllowPrivateAccess = "true"))
+	UDataTable* InventoryDataTable;
+
+	void InitialiseEquipmentSlot(int32 SlotNumber);
+
+	int32 GetEquipmentIndex(ESlotType SlotType, EAccessoryType AccessoryType);
+
 private:
 	/** Top down camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -113,8 +127,4 @@ private:
 	/** Camera boom positioning the camera above the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
-
-	void InitialiseEquipmentSlot(int32 SlotNumber);
-
-	int32 GetEquipmentIndex(ESlotType SlotType, EAccessoryType AccessoryType);
 };
