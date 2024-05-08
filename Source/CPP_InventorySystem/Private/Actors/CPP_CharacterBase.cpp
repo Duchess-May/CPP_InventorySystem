@@ -203,40 +203,36 @@ bool ACPP_CharacterBase::InventoryFindEmptySlot(int32& OutIndex)
 
 bool ACPP_CharacterBase::EquipItem(int32 InventoryIndex, FS_Inventory InventoryData)
 {
+	if (InventoryIndex < 0 || InventoryIndex >= Inventory.Num())
+		return false; // Invalid inventory index
+
 	int32 EquipmentIndex = GetEquipmentIndex(InventoryData.SlotType, InventoryData.AccessoryType);
-	if ((InventoryIndex < 0 || InventoryIndex >= Inventory.Num()) && EquipmentIndex != -1)
-		return false; // Invalid indices
+	if (EquipmentIndex == -1)
+		return false; // Invalid equipment index
 
-	// Retrieve the item from the inventory
-	FS_Slots InventoryItem = Inventory[InventoryIndex];
+	FS_Slots& InventoryItem = Inventory[InventoryIndex]; // Use reference to avoid copying
 
-	// If accessory, then validate
-	if (InventoryData.SlotType == ESlotType::Accessory)
+	// Validate accessory type matching
+	if (Equipment[EquipmentIndex].SlotType != InventoryItem.SlotType ||
+		(Equipment[EquipmentIndex].SlotType == ESlotType::Accessory &&
+			Equipment[EquipmentIndex].AccessoryType != InventoryItem.AccessoryType))
 	{
-		if (Equipment[EquipmentIndex].SlotType != InventoryItem.SlotType ||
-			(Equipment[EquipmentIndex].SlotType == ESlotType::Accessory &&
-				Equipment[EquipmentIndex].AccessoryType != InventoryItem.AccessoryType))
-		{
-			return false; // Type mismatch
-		}
+		return false; // Type mismatch
 	}
 
 	// Swap the items
 	FS_Slots Temp = Equipment[EquipmentIndex];
-
 	Equipment[EquipmentIndex] = InventoryItem;
-	Equipment[EquipmentIndex].WeaponType = InventoryItem.WeaponType;
 	Equipment[EquipmentIndex].Amount = 1;
 
-
-	// Swap equipment, else remove from inventory when adding to equipment
+	// Handle existing equipment item (check for None and Empty to avoid creating empty slots in the main inventory)
 	if (Temp.SlotType != ESlotType::Empty && Temp.Item.RowName != "None" && Temp.Item.RowName != "Empty")
 	{
 		Inventory[InventoryIndex] = Temp;
 	}
 	else
 	{
-		InventoryRemoveItemAtIndex(Equipment[EquipmentIndex].Item.RowName, InventoryIndex);
+		InventoryRemoveItemAtIndex(Equipment[EquipmentIndex].Item.RowName, InventoryIndex); // Assumes function to remove item by index
 	}
 
 	return true;
@@ -247,21 +243,19 @@ void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex, EItemPane
 	if (EquipmentIndex < 0 || EquipmentIndex >= Equipment.Num())
 		return; // Invalid index
 
-	switch (ReturnPanel)
-	{
-	case EItemPanelType::MountPanel:
-	{
-		UnequipMount(Equipment[EquipmentIndex]);
-	}
+	switch (ReturnPanel) {
+	// NOT YET IMPLEMENT
+	//case EItemPanelType::MountPanel:
+	//	UnequipMount(Equipment[EquipmentIndex]); // Move the mount from equipment back into the mount inventory
+	//	break;
 	case EItemPanelType::InventoryPanel:
-	{
-		// Move the item from the equipment slot back to the inventory
-		InventoryAddItem(Equipment[EquipmentIndex], false);
-	}
+		InventoryAddItem(Equipment[EquipmentIndex], false); // Move the item from the equipment slot back to the inventory
+		break;
+	default:
+		break;
 	}
 
-	// Reset the slot from equipment
-	InitialiseEquipmentSlot(EquipmentIndex);
+	InitialiseEquipmentSlot(EquipmentIndex); // Reset the slot from equipment
 }
 
 bool ACPP_CharacterBase::AddToKeyItems(const FS_Slots& ItemInfo)
@@ -280,53 +274,84 @@ bool ACPP_CharacterBase::UnequipMount(const FS_Slots& ItemInfo)
 
 void ACPP_CharacterBase::InitialiseEquipmentSlot(int32 SlotNumber)
 {
-	if (SlotNumber >= 0 && SlotNumber < Equipment.Num())
-	{
-		Equipment[SlotNumber].Item.RowName = "Empty";
-		Equipment[SlotNumber].Amount = 0;
+	if (SlotNumber < 0 || SlotNumber >= Equipment.Num())
+		return; // Validate the index range
 
-		// Initialize each slot with the appropriate type
-		if (SlotNumber == 0) Equipment[0].SlotType = ESlotType::Weapon; Equipment[0].WeaponType = EWeaponType::Bare;
-		if (SlotNumber == 1) Equipment[1].SlotType = ESlotType::Armour;
-		if (SlotNumber == 2) Equipment[2].SlotType = ESlotType::Accessory; Equipment[2].AccessoryType = EAccessoryType::Head;
-		if (SlotNumber == 3) Equipment[3].SlotType = ESlotType::Accessory; Equipment[3].AccessoryType = EAccessoryType::Arms;
-		if (SlotNumber == 3) Equipment[3].SlotType = ESlotType::Accessory; Equipment[3].AccessoryType = EAccessoryType::Ring;
-		if (SlotNumber == 5) Equipment[5].SlotType = ESlotType::Accessory; Equipment[4].AccessoryType = EAccessoryType::Waist;
-		if (SlotNumber == 6) Equipment[6].SlotType = ESlotType::Accessory; Equipment[5].AccessoryType = EAccessoryType::Shield;
-		if (SlotNumber == 7) Equipment[7].SlotType = ESlotType::Accessory; Equipment[6].AccessoryType = EAccessoryType::WeaponAtt;
-		if (SlotNumber == 8) Equipment[8].SlotType = ESlotType::Mount;
+	// Reset the slot to default values
+	Equipment[SlotNumber].Item.RowName = "Empty";
+	Equipment[SlotNumber].Amount = 0;
+
+	// Initialise each slot with the appropriate type and subtype
+	switch (SlotNumber) {
+	case Constants::Slot_Weapon:
+		Equipment[SlotNumber].SlotType = ESlotType::Weapon;
+		Equipment[SlotNumber].WeaponType = EWeaponType::Bare;
+		break;
+	case Constants::Slot_Shield:
+		Equipment[SlotNumber].SlotType = ESlotType::Accessory;
+		Equipment[SlotNumber].AccessoryType = EAccessoryType::Shield;
+		break;
+	case Constants::Slot_Armour:
+		Equipment[SlotNumber].SlotType = ESlotType::Armour;
+		break;
+	case Constants::Slot_Head:
+		Equipment[SlotNumber].SlotType = ESlotType::Accessory;
+		Equipment[SlotNumber].AccessoryType = EAccessoryType::Head;
+		break;
+	case Constants::Slot_Arms:
+		Equipment[SlotNumber].SlotType = ESlotType::Accessory;
+		Equipment[SlotNumber].AccessoryType = EAccessoryType::Arms;
+		break;
+	case Constants::Slot_Ring:
+		Equipment[SlotNumber].SlotType = ESlotType::Accessory;
+		Equipment[SlotNumber].AccessoryType = EAccessoryType::Ring;
+		break;
+	case Constants::Slot_Waist:
+		Equipment[SlotNumber].SlotType = ESlotType::Accessory;
+		Equipment[SlotNumber].AccessoryType = EAccessoryType::Waist;
+		break;
+	case Constants::Slot_Attachment:
+		Equipment[SlotNumber].SlotType = ESlotType::Accessory;
+		Equipment[SlotNumber].AccessoryType = EAccessoryType::WeaponAtt;
+		break;
+	case Constants::Slot_Mount:
+		Equipment[SlotNumber].SlotType = ESlotType::Mount;
+		break;
+	default:
+		// Handle unexpected index
+		break;
 	}
 }
 
 int32 ACPP_CharacterBase::GetEquipmentIndex(ESlotType SlotType, EAccessoryType AccessoryType)
 {
-	switch (SlotType)
-	{
+	switch (SlotType) {
 	case ESlotType::Weapon:
-		return 0;
+		return Constants::Slot_Weapon;
 	case ESlotType::Armour:
-		return 1;
+		return Constants::Slot_Armour;
 	case ESlotType::Accessory:
-		switch (AccessoryType)
-		{
-		case EAccessoryType::Head:
-			return 2;
-		case EAccessoryType::Arms:
-			return 3;
-		case EAccessoryType::Ring:
-			return 4;
-		case EAccessoryType::Waist:
-			return 5;
+		switch (AccessoryType) {
 		case EAccessoryType::Shield:
-			return 6;
+			return Constants::Slot_Shield;
+		case EAccessoryType::Head:
+			return Constants::Slot_Head;
+		case EAccessoryType::Arms:
+			return Constants::Slot_Arms;
+		case EAccessoryType::Ring:
+			return Constants::Slot_Ring;
+		case EAccessoryType::Waist:
+			return Constants::Slot_Waist;
 		case EAccessoryType::WeaponAtt:
-			return 7;
+			return Constants::Slot_Attachment;
 		default:
-			return -1; // Accessory type not handled
+			break; // Optionally handle unknown accessory types
 		}
+		break;
 	case ESlotType::Mount:
-		return 8;
+		return Constants::Slot_Mount;
 	default:
-		return -1; // Slot type not handled
+		break; // Optionally handle unknown slot types
 	}
+	return -1; // Return -1 for any unhandled types or accessory types
 }
