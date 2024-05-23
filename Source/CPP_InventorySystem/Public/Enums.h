@@ -205,3 +205,15 @@ enum class EWidgetType : uint8
 	Crafting		UMETA(DisplayName = "Crafting"),
 	Talking         UMETA(DisplayName = "Conversation")
 };
+
+UENUM(BlueprintType)
+enum class EButtonWidgetType : uint8
+{
+	Default			UMETA(DisplayName = "Default"),
+	Confirm			UMETA(DisplayName = "Confirm"),
+	Cancel			UMETA(DisplayName = "Cancel"),
+	TickerUp		UMETA(DisplayName = "Up Arrow"),
+	TickerDown		UMETA(DisplayName = "Down Arrow"),
+	TickerLeft		UMETA(DisplayName = "Left Arrow"),
+	TickerRight		UMETA(DisplayName = "Right Arrow")
+};
