@@ -127,7 +127,7 @@ enum class EAccessoryType : uint8
 	Ring        UMETA(DisplayName = "Ring"),
 	Waist		UMETA(DisplayName = "Waist"),
 	Shield		UMETA(DisplayName = "Shield"),
-	WeaponAtt	UMETA(DisplayName = "WeaponAttachment")
+	Mod			UMETA(DisplayName = "Mod")
 };
 
 UENUM(BlueprintType)
