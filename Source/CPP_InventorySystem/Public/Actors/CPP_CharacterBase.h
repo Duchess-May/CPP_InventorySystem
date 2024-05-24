@@ -39,13 +39,13 @@ public:
 	// Inventory Functions
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool InventoryAddItem(const FS_Slots& ItemInfo, bool bIgnoreStack);
+	bool InventoryAddItem(const FName RowName, const int32 Amount, const ESlotType SlotType, bool bIgnoreStack);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool InventoryFindStack(const FName RowName, const int32 Amount, int32& OutIndex, int32& OutAmount);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool InventoryAddItemToSlot(const FS_Slots ItemData, const int32 Index);
+	bool InventoryAddItemToSlot(const FName RowName, const int32 Amount, const ESlotType SlotType, const int32 Index);
 
 	/* Remove a specified amount of stacked items (or single) at inventory array index */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
@@ -55,7 +55,7 @@ public:
 	bool InventoryRemoveItemAtIndex(const FName RowName, const int32 Index);
 
 	UFUNCTION(BlueprintCallable, Category = "inventory")
-	bool InventoryCreateSlot(const FS_Slots ItemData);
+	bool InventoryCreateSlot(const FName RowName, const ESlotType SlotType, const int32 Amount);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	bool InventoryFindEmptySlot(int32& OutIndex);
@@ -66,12 +66,12 @@ public:
 	bool EquipItem(int32 InventoryIndex, FS_Inventory InventoryData);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory|Equipment")
-	void RemoveItemFromEquipment(int32 EquipmentIndex, EItemPanelType ReturnPanel);
+	void RemoveItemFromEquipment(int32 EquipmentIndex, EItemPanelType ReturnPanel, const ESlotType SlotType);
 
 	// Key Items
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory|Key Items")
-	bool AddToKeyItems(const FS_Slots& ItemInfo);
+	bool AddToKeyItems(const FName RowName, const int32 Amount, const ESlotType SlotType);
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory|Key Items")
 	void RemoveItemFromKeyItems(int32 KeyItemIndex);
@@ -79,7 +79,7 @@ public:
 	// Mounts
 
 	UFUNCTION(BlueprintCallable, Category = "Inventory|Key Items")
-	bool UnequipMount(const FS_Slots& ItemInfo);
+	bool UnequipMount(const FName RowName, const int32 Amount, const ESlotType SlotType);
 
 	// Variables
 
@@ -118,6 +118,8 @@ protected:
 	void InitialiseEquipmentSlot(int32 SlotNumber);
 
 	int32 GetEquipmentIndex(ESlotType SlotType, EAccessoryType AccessoryType);
+
+	FS_Slots ValidatedItemData(const FName RowName, const int32 Amount, FS_Slots& ItemDataOut);
 
 private:
 	/** Top down camera */

@@ -56,23 +56,23 @@ void ACPP_CharacterBase::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-bool ACPP_CharacterBase::InventoryAddItem(const FS_Slots& ItemInfo, bool bIgnoreStack)
+bool ACPP_CharacterBase::InventoryAddItem(const FName RowName, const int32 Amount, const ESlotType SlotType, bool bIgnoreStack)
 {
-
 	if (!bIgnoreStack)
 	{
 		// Check for stacking or add a new slot for the item
 		int32 ItemIndex = 0;
 		int32 ExistingAmount = 0;
 
-		bool bFoundStack = InventoryFindStack(ItemInfo.Item.RowName, ItemInfo.Amount, ItemIndex, ExistingAmount);
+		bool bFoundStack = InventoryFindStack(RowName, Amount, ItemIndex, ExistingAmount);
 
 		if (bFoundStack)
 		{
-			return InventoryAddItemToSlot(ItemInfo, ItemIndex);
+
+			return InventoryAddItemToSlot(RowName, Amount, SlotType, ItemIndex);
 		}
 	}
-	return InventoryCreateSlot(ItemInfo);
+	return InventoryCreateSlot(RowName, SlotType, Amount);
 }
 
 bool ACPP_CharacterBase::InventoryFindStack(const FName RowName, const int32 Amount, int32& OutIndex, int32& OutAmount)
@@ -92,25 +92,26 @@ bool ACPP_CharacterBase::InventoryFindStack(const FName RowName, const int32 Amo
 	return false; // stack not found
 }
 
-bool ACPP_CharacterBase::InventoryAddItemToSlot(const FS_Slots ItemInfo, const int32 Index)
+bool ACPP_CharacterBase::InventoryAddItemToSlot(const FName RowName, const int32 Amount, const ESlotType SlotType, const int32 Index)
 {
 	bool bSuccess = false;
+	FS_Slots ItemData = ValidatedItemData(RowName, Amount, ItemData);
 
 	if (Inventory[Index].Item.RowName == "Empty")
 	{
-		Inventory[Index].Item = ItemInfo.Item;
-		Inventory[Index].Amount = ItemInfo.Amount;
+		Inventory[Index].Item = ItemData.Item;
+		Inventory[Index].Amount = ItemData.Amount;
 
 		bSuccess = true;
 	}
 	else
 	{
-		bool bCanStack = ItemInfo.Item.DataTable->FindRow<FS_Inventory>(ItemInfo.Item.RowName, TEXT("Context String"))->CanStack;
+		bool bCanStack = ItemData.Item.DataTable->FindRow<FS_Inventory>(ItemData.Item.RowName, TEXT("Context String"))->CanStack;
 		if (bCanStack)
 		{
-			if (Inventory[Index].Item.RowName == ItemInfo.Item.RowName)
+			if (Inventory[Index].Item.RowName == ItemData.Item.RowName)
 			{
-				Inventory[Index].Amount += ItemInfo.Amount;
+				Inventory[Index].Amount += ItemData.Amount;
 
 				bSuccess = true;
 			}
@@ -163,8 +164,10 @@ bool ACPP_CharacterBase::InventoryRemoveItemAtIndex(const FName RowName, const i
 	return false; // Invalid index or not a valid item
 }
 
-bool ACPP_CharacterBase::InventoryCreateSlot(const FS_Slots ItemData)
+bool ACPP_CharacterBase::InventoryCreateSlot(const FName RowName, const ESlotType SlotType, const int32 Amount)
 {
+	FS_Slots ItemData = ValidatedItemData(RowName, Amount, ItemData);
+
 	// Check if there's space in the inventory
 	if (Inventory.Num() < InventorySpaces)
 	{
@@ -238,7 +241,7 @@ bool ACPP_CharacterBase::EquipItem(int32 InventoryIndex, FS_Inventory InventoryD
 	return true;
 }
 
-void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex, EItemPanelType ReturnPanel)
+void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex, EItemPanelType ReturnPanel, const ESlotType SlotType)
 {
 	if (EquipmentIndex < 0 || EquipmentIndex >= Equipment.Num())
 		return; // Invalid index
@@ -249,7 +252,7 @@ void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex, EItemPane
 	//	UnequipMount(Equipment[EquipmentIndex]); // Move the mount from equipment back into the mount inventory
 	//	break;
 	case EItemPanelType::InventoryPanel:
-		InventoryAddItem(Equipment[EquipmentIndex], false); // Move the item from the equipment slot back to the inventory
+		InventoryAddItem(Equipment[EquipmentIndex].Item.RowName, Equipment[EquipmentIndex].Amount, SlotType, false); // Move the item from the equipment slot back to the inventory
 		break;
 	default:
 		break;
@@ -258,7 +261,7 @@ void ACPP_CharacterBase::RemoveItemFromEquipment(int32 EquipmentIndex, EItemPane
 	InitialiseEquipmentSlot(EquipmentIndex); // Reset the slot from equipment
 }
 
-bool ACPP_CharacterBase::AddToKeyItems(const FS_Slots& ItemInfo)
+bool ACPP_CharacterBase::AddToKeyItems(const FName RowName, const int32 Amount, const ESlotType SlotType)
 {
 	return false;
 }
@@ -267,7 +270,7 @@ void ACPP_CharacterBase::RemoveItemFromKeyItems(int32 KeyItemIndex)
 {
 }
 
-bool ACPP_CharacterBase::UnequipMount(const FS_Slots& ItemInfo)
+bool ACPP_CharacterBase::UnequipMount(const FName RowName, const int32 Amount, const ESlotType SlotType)
 {
 	return false;
 }
@@ -312,7 +315,7 @@ void ACPP_CharacterBase::InitialiseEquipmentSlot(int32 SlotNumber)
 		break;
 	case Constants::Slot_Attachment:
 		Equipment[SlotNumber].SlotType = ESlotType::Accessory;
-		Equipment[SlotNumber].AccessoryType = EAccessoryType::WeaponAtt;
+		Equipment[SlotNumber].AccessoryType = EAccessoryType::Mod;
 		break;
 	case Constants::Slot_Mount:
 		Equipment[SlotNumber].SlotType = ESlotType::Mount;
@@ -342,7 +345,7 @@ int32 ACPP_CharacterBase::GetEquipmentIndex(ESlotType SlotType, EAccessoryType A
 			return Constants::Slot_Ring;
 		case EAccessoryType::Waist:
 			return Constants::Slot_Waist;
-		case EAccessoryType::WeaponAtt:
+		case EAccessoryType::Mod:
 			return Constants::Slot_Attachment;
 		default:
 			break; // Optionally handle unknown accessory types
@@ -354,4 +357,16 @@ int32 ACPP_CharacterBase::GetEquipmentIndex(ESlotType SlotType, EAccessoryType A
 		break; // Optionally handle unknown slot types
 	}
 	return -1; // Return -1 for any unhandled types or accessory types
+}
+
+FS_Slots ACPP_CharacterBase::ValidatedItemData(const FName RowName, const int32 Amount, FS_Slots& ItemDataOut)
+{
+	ItemDataOut.Item.DataTable = InventoryDataTable;
+	ItemDataOut.Item.RowName = RowName;
+	ItemDataOut.Amount = Amount;
+	ItemDataOut.SlotType = InventoryDataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->SlotType;
+	ItemDataOut.WeaponType = InventoryDataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->WeaponType;
+	ItemDataOut.AccessoryType = InventoryDataTable->FindRow<FS_Inventory>(RowName, TEXT("Context String"))->AccessoryType;
+
+	return ItemDataOut;
 }
