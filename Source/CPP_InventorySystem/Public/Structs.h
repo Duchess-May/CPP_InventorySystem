@@ -135,7 +135,6 @@ public:
 	int32 LVL;
 };
 
-
 USTRUCT(BlueprintType)
 struct FS_Currencies
 {
@@ -261,10 +260,13 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "CanCraft", MakeStructureDefaultValue = "False"))
 	bool CanCraft;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "Recipe"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "CraftRecipe"))
 	TArray<FS_Slots> Recipe;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "OutCraftAmount", MakeStructureDefaultValue = "0"))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "CraftSuccessRate", MakeStructureDefaultValue = "0.500000"))
+	double CraftSuccessRate;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "OutCraftAmount", MakeStructureDefaultValue = "1"))
 	int32 OutCraftAmount;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (DisplayName = "ActorClass", AllowedClasses = "CPP_ItemBase"))

@@ -127,7 +127,7 @@ enum class EAccessoryType : uint8
 	Ring        UMETA(DisplayName = "Ring"),
 	Waist		UMETA(DisplayName = "Waist"),
 	Shield		UMETA(DisplayName = "Shield"),
-	WeaponAtt	UMETA(DisplayName = "WeaponAttachment")
+	Mod			UMETA(DisplayName = "Mod")
 };
 
 UENUM(BlueprintType)
@@ -204,4 +204,16 @@ enum class EWidgetType : uint8
 	Shop			UMETA(DisplayName = "Shop"),
 	Crafting		UMETA(DisplayName = "Crafting"),
 	Talking         UMETA(DisplayName = "Conversation")
+};
+
+UENUM(BlueprintType)
+enum class EButtonWidgetType : uint8
+{
+	Default			UMETA(DisplayName = "Default"),
+	Confirm			UMETA(DisplayName = "Confirm"),
+	Cancel			UMETA(DisplayName = "Cancel"),
+	TickerUp		UMETA(DisplayName = "Up Arrow"),
+	TickerDown		UMETA(DisplayName = "Down Arrow"),
+	TickerLeft		UMETA(DisplayName = "Left Arrow"),
+	TickerRight		UMETA(DisplayName = "Right Arrow")
 };
