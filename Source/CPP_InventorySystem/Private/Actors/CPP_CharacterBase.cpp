@@ -41,7 +41,7 @@ ACPP_CharacterBase::ACPP_CharacterBase()
 	InventorySpaces = 100;
 	EquipmentSlots = 9;
 
-	InventoryDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, Constants::InventoryDataTableForStaticLoad));
+	InventoryDataTable = nullptr;
 
 	// Create default equipment slots
 	Equipment.SetNum(EquipmentSlots);
@@ -50,6 +50,21 @@ ACPP_CharacterBase::ACPP_CharacterBase()
 		InitialiseEquipmentSlot(i);
 	}
 }
+
+void ACPP_CharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (!InventoryDataTable)
+	{
+		InventoryDataTable = Cast<UDataTable>(StaticLoadObject(UDataTable::StaticClass(), nullptr, Constants::InventoryDataTableForStaticLoad));
+		if (!InventoryDataTable)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to load Inventory DataTable at runtime."));
+		}
+	}
+}
+
 
 void ACPP_CharacterBase::Tick(float DeltaSeconds)
 {

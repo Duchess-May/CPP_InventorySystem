@@ -96,6 +96,9 @@ public:
 
 protected:
 
+	/* Set variables when appropriate and not in the constructor before they are ready */
+	virtual void BeginPlay() override;
+
 	/* Change to VisibleAnywhere, BlueprintReadOnly when done testing */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (AllowPrivateAccess = "true"))
 	TArray<FS_Slots> Equipment;
